@@ -1,0 +1,58 @@
+.kryptonite-text {
+  color: black !important;
+}
+
+.kryptonite-button {
+  background-image: none !important;
+}
+
+.kryptonite-checkout-text {
+  color: #6c757d !important;
+}
+
+.kryptonite-navbar-icon {
+  font-family: "AMDRTG";
+}
+
+@font-face {
+  font-family: "AMDRTG";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../fonts/AMDRTG.ttf"); /* IE9 Compat Modes */
+}
+
+/* The animation code */
+@keyframes modal {
+  0% {
+    margin-bottom: 400px;
+  }
+}
+/* The element to apply the animation to */
+.fixmodal {
+  margin-bottom: 0;
+  animation-name: modal;
+  animation-duration: 1s;
+}
+
+@keyframes index {
+  0% {
+    opacity: 0;
+    margin-top: 500px;
+  }
+}
+
+body {
+  opacity: 100;
+  margin-top: 0;
+  animation-name: index;
+  animation-duration: 4s;
+}
+
+.adminSide {
+  background-color: red !important;
+}
+
+.carouselImage {
+  background-color: black;
+  mix-blend-mode: multiply;
+}
