@@ -105,6 +105,14 @@ const Navbar = () => {
                   </Link>
                 </li>
                 <li className="nav-link">
+                  <Link
+                    to="/transactionList"
+                    className="nav-item dropdown-item"
+                  >
+                    Transaction List
+                  </Link>
+                </li>
+                <li className="nav-link">
                   <button
                     onClick={handleSettings}
                     className="nav-item dropdown-item"
@@ -206,7 +214,7 @@ const Navbar = () => {
               </span>
             </div>
           </Link>
-          <ul className="navbar-nav ml-auto">{isLogged()}</ul>
+          <ul className="navbar-nav ml-auto">{isLogged()} </ul>
         </div>
       </div>
     </nav>

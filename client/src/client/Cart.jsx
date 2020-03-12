@@ -1,6 +1,4 @@
 import React, { Component, Fragment } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import axios from "axios";
 export default class Cart extends Component {
@@ -53,6 +51,11 @@ export default class Cart extends Component {
     console.log(identity);
   }
 
+  handleDeleteCart() {
+    localStorage.removeItem("Cart");
+    window.location.assign("/cart");
+  }
+
   handleFormData(e) {
     e.preventDefault();
     const formData = new FormData();
@@ -85,7 +88,7 @@ export default class Cart extends Component {
       .catch(err => console.log(err));
 
     localStorage.removeItem("Cart");
-    window.location.assign("/");
+    // window.location.assign("/");
   }
 
   handleDeleteItem(id) {
@@ -121,7 +124,7 @@ export default class Cart extends Component {
                   <th style={{ width: "22%" }} className="text-center">
                     Subtotal
                   </th>
-                  <th style={{ width: "10%" }} />
+                  <th style={{ width: "10%" }}>Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -158,50 +161,31 @@ export default class Cart extends Component {
                         ${data.total || data.price * data.quantity}
                       </td>
                       <td className="actions" data-th>
-                        <button className="btn btn-info btn-sm">
-                          <FontAwesomeIcon icon={faEdit} />
-                        </button>
-                        <button
-                          onClick={() => this.handleDeleteItem(data._id)}
-                          className="btn btn-danger btn-sm"
-                        >
-                          <FontAwesomeIcon icon={faTrash} />
-                        </button>
+                        <span className="badge badge-success">Active</span>
                       </td>
                     </tr>
                   );
                 })}
               </tbody>
-              <tfoot>
-                <tr>
-                  <td>
-                    <Link
-                      to="/"
-                      className="kryptonite-button btn btn-outline-primary"
-                    >
-                      <i className="fa fa-angle-left" /> Continue Shopping
-                    </Link>
-                  </td>
-                  <td colSpan={2} className="hidden-xs" />
-                  <td className="kryptonite-text hidden-xs text-center">
-                    <form onSubmit={this.handleInitiateData}>
-                      <button className="kryptonite-button btn btn-outline-warning">
-                        Save Current Data
-                      </button>
-                    </form>
-                  </td>
-
-                  <td>
-                    <Link
-                      className="kryptonite-button btn btn-outline-success"
-                      to="/checkout"
-                    >
-                      CHECKOUT <i className="fa fa-angle-right" />
-                    </Link>
-                  </td>
-                </tr>
-              </tfoot>
             </table>
+            <div className="col-md-12 d-flex justify-content-around">
+              <Link
+                to="/"
+                className="kryptonite-button btn btn-outline-primary"
+              >
+                <i className="fa fa-angle-left" /> Continue Shopping
+              </Link>
+              <button disabled={!localStorage.getItem("Cart")} onClick={this.handleDeleteCart} className="kryptonite-button btn btn-outline-danger">
+                Delete Cart
+              </button>
+              <Link
+                disabled={!localStorage.getItem("Cart")}
+                className="kryptonite-button btn btn-outline-success"
+                to="/checkout"
+              >
+                CHECKOUT <i className="fa fa-angle-right" />
+              </Link>
+            </div>
           </div>
         </section>
       </Fragment>

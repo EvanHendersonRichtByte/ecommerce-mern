@@ -1,12 +1,15 @@
 import React, { Component, Fragment } from "react";
 import axios from "axios";
 import Footer from "../components/Footer";
+import { Link } from "react-router-dom";
 export default class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
       admin: [],
-      user: []
+      user: [],
+      transactions: [],
+      time: new Date()
     };
   }
 
@@ -20,6 +23,16 @@ export default class Dashboard extends Component {
     window.onload();
     this.handleGetAdmin();
     this.handleGetUser();
+    this.handleGetTransactions();
+    this.intervalID = setInterval(() => this.getTime(), 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.intervalID);
+  }
+
+  getTime() {
+    this.setState({ time: new Date() });
   }
 
   handleGetAdmin() {
@@ -34,6 +47,30 @@ export default class Dashboard extends Component {
       .then(res => this.setState(() => ({ user: res.data })));
   }
 
+  handleGetTransactions() {
+    axios.get("http://localhost:2020/transactionList").then(res => {
+      console.log(res.data);
+      this.setState({ transactions: res.data });
+    });
+  }
+
+  date() {
+    let date = new Date();
+    return <p>{date.toDateString()}</p>;
+  }
+
+  sale() {
+    let data = 0;
+    this.state.transactions.forEach(value => {
+      data += value.total;
+    });
+    return <span>{data}</span>;
+  }
+
+  shipment() {
+    let data = this.state.transactions.length;
+    return <span>{data}</span>;
+  }
   render() {
     const style = {
       marginTop: "70px"
@@ -49,52 +86,37 @@ export default class Dashboard extends Component {
               <div className="sidebar-wrapper">
                 <ul className="nav">
                   <li>
-                    <a href="./dashboard.html">
+                    <Link to="/dashboard">
                       <i className="tim-icons icon-chart-pie-36" />
                       <p>Dashboard</p>
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="./icons.html">
-                      <i className="tim-icons icon-atom" />
-                      <p>Icons</p>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="./map.html">
-                      <i className="tim-icons icon-pin" />
-                      <p>Maps</p>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="./notifications.html">
+                    <Link to="/admin/notifications">
                       <i className="tim-icons icon-bell-55" />
                       <p>Notifications</p>
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="./user.html">
+                    <Link to="/admin/userList">
                       <i className="tim-icons icon-single-02" />
-                      <p>User Profile</p>
-                    </a>
+                      <p>User List</p>
+                    </Link>
                   </li>
                   <li>
-                    <a href="./tables.html">
-                      <i className="tim-icons icon-puzzle-10" />
-                      <p>Table List</p>
-                    </a>
+                    <Link to="/admin/transactionList">
+                      <i className="tim-icons icon-bullet-list-67" />
+                      <p>Transaction List</p>
+                    </Link>
                   </li>
                   <li>
-                    <a href="./typography.html">
-                      <i className="tim-icons icon-align-center" />
-                      <p>Typography</p>
-                    </a>
+                    <Link to="/admin/maps">
+                      <i className="tim-icons icon-pin" />
+                      <p>Maps</p>
+                    </Link>
                   </li>
-                  <li>
-                    <a href="./rtl.html">
-                      <i className="tim-icons icon-world" />
-                      <p>RTL Support</p>
-                    </a>
+                  <li className="text-center" style={{ marginTop: "500px" }}>
+                    <h6>{this.state.time.toLocaleTimeString()}</h6>
                   </li>
                 </ul>
               </div>
@@ -140,8 +162,7 @@ export default class Dashboard extends Component {
                       <div className="card-header ">
                         <div className="row">
                           <div className="col-sm-6 text-left">
-                            <h5 className="card-category">Total Shipments</h5>
-                            <h2 className="card-title">Performance</h2>
+                            <h2 className="card-title">Data Analytics</h2>
                           </div>
                           <div className="col-sm-6">
                             <div
@@ -201,7 +222,7 @@ export default class Dashboard extends Component {
                         <h5 className="card-category">Total Shipments</h5>
                         <h3 className="card-title">
                           <i className="tim-icons icon-bell-55 text-danger " />{" "}
-                          {Math.floor(Math.random() * (200 * 100))}
+                          {this.shipment()}
                         </h3>
                       </div>
                       <div className="card-body ">
@@ -217,7 +238,7 @@ export default class Dashboard extends Component {
                         <h5 className="card-category">Daily Sales</h5>
                         <h3 className="card-title">
                           <i className="tim-icons icon-delivery-fast text-info " />{" "}
-                         $ {Math.floor(Math.random() * 1000000)}
+                          $ {this.sale()}
                         </h3>
                       </div>
                       <div className="card-body ">
@@ -249,9 +270,8 @@ export default class Dashboard extends Component {
                     <div className="card ">
                       <div className="card-header">
                         <h4 className="card-title">
-                          {" "}
-                          Recently Users Transaction{" "}
-                          <i className="tim-icons icon-single-02 text-info" />{" "}
+                          Recently Users Transaction &nbsp;
+                          <i className="tim-icons icon-single-02 text-info" />
                         </h4>
                       </div>
                       <div className="card-body">
@@ -260,35 +280,37 @@ export default class Dashboard extends Component {
                             <thead className=" text-primary">
                               <tr>
                                 <th>Name</th>
+                                <th>Country</th>
                                 <th>City</th>
-                                <th>Age</th>
                                 <th className="text-center">Total Expense</th>
+                                <th>Status</th>
                               </tr>
                             </thead>
                             <tbody>
-                              {this.state.user.map(data => {
+                              {this.state.transactions.map(data => {
                                 return (
                                   <tr key={data._id}>
-                                    <td>
-                                      {data.username[0].toUpperCase() +
-                                        data.username.slice(1)}
-                                    </td>
-                                    {!data.address ? (
-                                      <td>Unknown</td>
-                                    ) : (
-                                      <td>{data.address}</td>
-                                    )}
-                                    {!data.age ? (
-                                      <td>Unknown</td>
-                                    ) : (
-                                      <td>{data.age}</td>
-                                    )}
+                                    <td>{data.firstName}</td>
+                                    <td>{data.country}</td>
+                                    <td>{data.address}</td>
                                     <td className="text-center">
-                                      $
-                                      {Math.floor(
-                                        Math.random() * (120 + 10000)
-                                      )}
+                                      $ {data.total}
                                     </td>
+                                    {!data.status && (
+                                      <td className="text-secondary">
+                                        Pending
+                                      </td>
+                                    )}
+                                    {data.status === "Accepted" && (
+                                      <td className="text-success">
+                                        In Transit
+                                      </td>
+                                    )}
+                                    {data.status === "Declined" && (
+                                      <td className="text-danger">
+                                        Rejected
+                                      </td>
+                                    )}
                                   </tr>
                                 );
                               })}
@@ -302,9 +324,8 @@ export default class Dashboard extends Component {
                     <div className="card ">
                       <div className="card-header">
                         <h4 className="card-title">
-                          {" "}
-                          Employee Of The Month{" "}
-                          <i className="tim-icons icon-badge text-danger" />{" "}
+                          Employee Of The Month &nbsp;
+                          <i className="tim-icons icon-badge text-danger" />
                         </h4>
                       </div>
                       <div className="card-body">

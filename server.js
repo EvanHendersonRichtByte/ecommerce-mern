@@ -36,6 +36,13 @@ let UserSchema = new mongoose.Schema({
     age: Number,
     address: String,
     image: String,
+
+    firstName: String,
+    lastName: String,
+    email: String,
+    address2: String,
+    country: String,
+    zip: Number,
     carts: [ProductSchema]
 })
 
@@ -57,7 +64,8 @@ const TransactionSchema = mongoose.Schema({
     cardNumber: Number,
     expiration: Date,
     cvv: String,
-    proofOfPayment: String,
+    image: String,
+    status: String
 })
 
 const Transaction = mongoose.model('Transaction', TransactionSchema)
@@ -84,7 +92,7 @@ const userStorage = multer.diskStorage({
 let uploadUserStorage = multer({ storage: userStorage }).single('image')
 
 const transactionStorage = multer.diskStorage({
-    destionation: './client/public/uploads/transactions',
+    destination: './client/public/uploads/transactions',
     filename: function (req, file, cb) {
         cb(null, "PaymentProofing-" + Date.now() + path.extname(file.originalname));
     }
@@ -121,6 +129,13 @@ app.get('/profile/:id', function (req, res) {
 app.put('/profile/:id', function (req, res) {
     uploadUserStorage(req, res, (next) => {
         User.findByIdAndUpdate(req.params.id, {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            address2: req.body.address2,
+            country: req.body.country,
+            zip: req.body.zip,
+            // ─────────────────────────────────────────────────────────────────
             description: req.body.description,
             age: req.body.age,
             address: req.body.address,
@@ -128,7 +143,9 @@ app.put('/profile/:id', function (req, res) {
         }, function (err, data) {
             if (err) {
                 console.log(err)
+                res.send(err)
             } else {
+                console.log(data)
                 res.send(data)
             }
         })
@@ -192,7 +209,7 @@ app.get('/product', (req, res) => {
 //    
 
 //
-// ──────────────────────────────────────────────────────────────── USER LIST ─────
+// ──────────────────────────────────────────────────── USER TRANSACTION LIST ─────
 //
 
 app.get('/adminList', function (req, res) {
@@ -211,6 +228,18 @@ app.get('/userList', function (req, res) {
             console.log(err)
         } else {
             res.send(user)
+        }
+    })
+})
+
+app.get('/transactionList', function (req, res) {
+    Transaction.find({}, function (err, data) {
+        if (err) {
+            console.log(err)
+            res.send(err)
+        } else {
+            console.log(data)
+            res.send(data)
         }
     })
 })
@@ -302,8 +331,6 @@ app.post('/cart/:id', function (req, res) {
     })
 })
 
-// ────────────────────────────────────────────────────────────────────────────────
-
 app.get('/cart/:id', function (req, res) {
     User.findById(req.params.id, function (err, data) {
         if (err) {
@@ -351,6 +378,82 @@ app.post('/checkout', function (req, res) {
         console.log(data)
     }
 })
+
+app.get('/checkout/:id', function (req, res) {
+    Transaction.find({ userId: req.params.id }, function (err, data) {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(data)
+            console.log(data)
+        }
+    })
+})
+
+app.put('/transaction/:id', function (req, res) {
+    uploadTransactionStorage(req, res, (next) => {
+        Transaction.findByIdAndUpdate(req.params.id, {
+            image: req.file.filename
+        }, function (err, data) {
+            if (err) {
+                console.log(err)
+                res.send(err)
+            } else {
+                console.log(data)
+                res.send(data)
+            }
+        })
+    })
+})
+
+app.get('/transaction', function (req, res) {
+    Transaction.find({ "image": { $regex: /PaymentProofing/, $options: 'i' } }, function (err, data) {
+        if (err) {
+            console.log(err)
+            res.send(err)
+        } else {
+            console.log(data)
+            res.send(data)
+        }
+    })
+})
+
+app.delete('/transaction/delete/:id', function (req, res) {
+    Transaction.findByIdAndRemove(req.params.id, function (err, data) {
+        if (err) {
+            console.log(err)
+            res.send(data)
+        } else {
+            console.log(`DELETED ********************************* ${data}`)
+            res.send(data)
+        }
+    })
+})
+
+app.put('/admin/checkTransaction/:id', function (req, res) {
+    Transaction.findByIdAndUpdate(req.params.id, { status: req.body.status }, function (err, data) {
+        if (err) {
+            console.log(err)
+            res.send(err)
+        } else {
+            console.log(data)
+            res.send(data)
+        }
+    })
+})
+
+app.put('/deleteStock/:id', function (req, res) {
+    Transaction.findByIdAndUpdate(req.params.id, { quantity: req.body.minQuantity }, function (err, data) {
+        if (err) {
+            console.log(err)
+            res.send(err)
+        } else {
+            console.log(data)
+            res.send(data)
+        }
+    })
+})
+
 //
 // ─── LOCALHOST ──────────────────────────────────────────────────────────────────
 //

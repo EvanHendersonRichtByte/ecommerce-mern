@@ -61,14 +61,18 @@ export default class Checkout extends Component {
       cart.forEach(function(value, index) {
         total += value.total;
       });
-      console.log(total);
       this.setState(() => ({ total }));
       axios
         .get("http://localhost:2020/cart/" + JSON_id)
         .then(res => {
           this.setState({
-            firstName: res.data.username,
-            address: res.data.address
+            firstName: res.data.firstName,
+            lastName: res.data.lastName,
+            email: res.data.email,
+            address: res.data.address,
+            address2: res.data.address2,
+            country: res.data.country,
+            zip: res.data.zip
           });
         })
         .catch(err => console.log(err));
@@ -77,25 +81,60 @@ export default class Checkout extends Component {
 
   handleFormSubmit(e) {
     e.preventDefault();
+    // axios
+    //   .post("http://localhost:2020/checkout", {
+    //     userId: this.state.userId,
+    //     firstName: this.state.firstName,
+    //     lastName: this.state.lastName,
+    //     carts: this.state.carts,
+    //     email: this.state.email,
+    //     address: this.state.address,
+    //     address2: this.state.address2,
+    //     country: this.state.country,
+    //     zip: this.state.zip,
+    //     total: this.state.total,
+    //     paymentMethod: this.state.paymentMethod,
+    //     cardName: this.state.cardName,
+    //     cardNumber: this.state.cardNumber,
+    //     expiration: this.state.expiration,
+    //     cvv: this.state.cvv
+    //   })
+    //   .then(res => {
+    //     console.log(res);
+    //     window.location.assign("/transactionList");
+    //   })
+    //   .catch(err => console.log(err));
     axios
-      .post("http://localhost:2020/checkout", {
-        userId: this.state.userId,
-        firstName: this.state.firstName,
-        lastName: this.state.lastName,
-        carts: this.state.carts,
-        email: this.state.email,
-        address: this.state.address,
-        address2: this.state.address2,
-        country: this.state.country,
-        zip: this.state.zip,
-        total: this.state.total,
-        paymentMethod: this.state.paymentMethod,
-        cardName: this.state.cardName,
-        cardNumber: this.state.cardNumber,
-        expiration: this.state.expiration,
-        cvv: this.state.cvv
+      .get("http://localhost:2020/product")
+      .then(indexProduct => {
+        console.log(indexProduct);
+        let lastStock = 0;
+        let id = "";
+        this.state.carts.forEach(value => {
+          lastStock += value.quantity;
+        });
+        let output = indexProduct.data.find(value => {
+          let id = "";
+          let minStock = 0;
+          let title;
+          this.state.carts.forEach(value => {
+            title += value.title;
+            id += value._id;
+            minStock += value.quantity;
+          });
+          return value._id === id;
+        });
+        console.log(output);
+        console.log("Quantity" + output.quantity + "minStock" + lastStock);
+        lastStock = output.quantity - lastStock;
+        console.log(lastStock);
+        axios
+          .put("http://localhost:2020/deleteStock/5e66fbd52fe7df1660eadc35", {
+            minQuantity: lastStock
+          })
+          .then(res => console.log(res))
+          .catch(err => console.log);
       })
-      .then(res => console.log(res))
       .catch(err => console.log(err));
   }
 
@@ -151,10 +190,18 @@ export default class Checkout extends Component {
                 <input
                   type="text"
                   className="form-control"
+                  name="promo"
+                  onChange={this.onChange}
                   placeholder="Promo code"
                 />
               </div>
-              <button type="submit" className="btn btn-secondary btn-block">
+              <button
+                onClick={() =>
+                  this.setState(() => ({ total: this.state.total / 2 }))
+                }
+                type="submit"
+                className="btn btn-secondary btn-block"
+              >
                 Redeem
               </button>
             </div>
@@ -185,6 +232,7 @@ export default class Checkout extends Component {
                       id="lastName"
                       name="lastName"
                       onChange={this.onChange}
+                      value={this.state.lastName}
                     />
                     <div className="invalid-feedback">Valid last name is .</div>
                   </div>
@@ -199,7 +247,7 @@ export default class Checkout extends Component {
                     id="email"
                     name="email"
                     onChange={this.onChange}
-                    placeholder="you@example.com"
+                    value={this.state.email}
                   />
                   <div className="invalid-feedback">
                     Please enter a valid email address for shipping updates.
@@ -231,6 +279,7 @@ export default class Checkout extends Component {
                     name="address2"
                     onChange={this.onChange}
                     placeholder="Apartment or suite"
+                    value={this.state.address2}
                   />
                 </div>
                 <div className="row">
@@ -243,6 +292,7 @@ export default class Checkout extends Component {
                       name="country"
                       onChange={this.onChange}
                       placeholder="United States"
+                      value={this.state.country}
                     />
                     <div className="invalid-feedback">
                       Please select a valid country.
@@ -257,6 +307,7 @@ export default class Checkout extends Component {
                       name="zip"
                       onChange={this.onChange}
                       placeholder="14522"
+                      value={this.state.zip}
                     />
                     <div className="invalid-feedback">Zip code .</div>
                   </div>
@@ -395,13 +446,6 @@ export default class Checkout extends Component {
                   Continue to checkout
                 </button>
               </form>
-              <button
-                onClick={() => {
-                  console.log(this.state);
-                }}
-              >
-                Get Checked Value
-              </button>
             </div>
           </div>
         </div>

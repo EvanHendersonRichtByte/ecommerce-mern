@@ -3619,10 +3619,10 @@ img {
 .img-raised {
   box-shadow: 0px 10px 25px 0px rgba(0, 0, 0, 0.3);
 }
-
+/* 
 .table>tbody>tr>td {
   color: rgba(0, 0, 0, 0.7) !important;
-}
+} */
 
 .table>tbody>tr>td .photo {
   height: 30px;

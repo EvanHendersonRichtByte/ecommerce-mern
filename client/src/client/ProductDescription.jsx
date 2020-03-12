@@ -1,6 +1,7 @@
 import React, { Fragment, Component } from "react";
 import Modal from "react-modal";
 import EditProduct from "./EditProduct";
+import { Link } from "react-router-dom";
 Modal.setAppElement("#root");
 
 //
@@ -10,14 +11,16 @@ Modal.setAppElement("#root");
 export default class ProductDescription extends Component {
   constructor(props) {
     super(props);
+    this.addToCart = this.addToCart.bind(this);
     this.isAdmin = this.isAdmin.bind(this);
-    this.handleAddToCart = this.handleAddToCart.bind(this);
     this.handleProductId = this.handleProductId.bind(this);
     this.handleEditModal = this.handleEditModal.bind(this);
     this.state = {
       cart: [],
       dataProps: [],
       _id: "",
+      quantity: 1,
+      total: 0,
       editModalStatus: false
     };
   }
@@ -34,18 +37,28 @@ export default class ProductDescription extends Component {
     this.setState(() => ({ _id: this.props.data._id }));
   }
 
-  handleAddToCart() {
-    const token = localStorage.getItem("token");
-    const _id = localStorage.getItem("_id");
-    if (!token && !_id) {
-      alert("System Bypassed! You must register first!");
-      window.location.assign("/");
+  addToCart = item => {
+    let oldItems = JSON.parse(localStorage.getItem("Cart")) || [];
+    let newid = item._id;
+    console.log(newid);
+    let match = oldItems.find(({ _id }) => _id === newid);
+    if (match) {
+      match["quantity"] += parseInt(this.state.quantity);
+      match["total"] += item.price * parseInt(this.state.quantity);
     } else {
-      const JSONProductId = this.state._id;
-
-      localStorage.setItem("Cart", JSON.stringify(JSONProductId));
+      let newItem = {
+        image: item.image,
+        _id: item._id,
+        title: item.title,
+        price: item.price,
+        description: item.description,
+        quantity: parseInt(this.state.quantity),
+        total: item.price * parseInt(this.state.quantity)
+      };
+      oldItems.push(newItem);
     }
-  }
+    localStorage.setItem("Cart", JSON.stringify(oldItems));
+  };
 
   isAdmin() {
     let role = localStorage.getItem("Role");
@@ -55,7 +68,9 @@ export default class ProductDescription extends Component {
         return (
           <Fragment>
             <span>
-              <form onSubmit={() => this.props.deleteProduct(this.props.data._id)}>
+              <form
+                onSubmit={() => this.props.deleteProduct(this.props.data._id)}
+              >
                 <button className="btn btn-outline-danger" type="submit">
                   Delete
                 </button>
@@ -72,19 +87,35 @@ export default class ProductDescription extends Component {
       } else {
         return (
           <button
-            onClick={this.handleAddToCart}
+            onClick={() => {
+              this.addToCart(this.props.data);
+            }}
             className="btn btn-outline-success"
           >
             Add To Cart
           </button>
         );
       }
+    } else {
+      return (
+            <Link to="/login" className="btn btn-outline-success">
+              Login Now
+            </Link>
+      );
+    }
+  }
+
+  notLoggedIn(){
+    let token = localStorage.getItem('Token')
+    let _id = localStorage.getItem('_id')
+    if(!token && !_id){
+      return (
+        <p className="kryptonite-text text-center">You must Login First!</p>
+      )
     }
   }
 
   render() {
-    
-
     const customStyles = {
       content: {
         width: "800px",
@@ -111,6 +142,7 @@ export default class ProductDescription extends Component {
         style={customStyles}
       >
         <Fragment>
+          {this.notLoggedIn()}
           <div className="fixmodal card text-center">
             <img
               style={imageStyles}
@@ -122,9 +154,13 @@ export default class ProductDescription extends Component {
               <h4 className="card-title">{this.props.data.title}</h4>
               <div className="col-col-md-12 d-flex justify-content-center">
                 <div className="row">
-                  <div className="col col-md-12">{this.props.data.description}</div>
+                  <div className="col col-md-12">
+                    {this.props.data.description}
+                  </div>
                 </div>
-                <div className="col">Quantity: {this.props.data.quantity}pcs</div>
+                <div className="col">
+                  Quantity: {this.props.data.quantity}pcs
+                </div>
                 <div className="col">Price: ${this.props.data.price}</div>
                 <button
                   onClick={this.props.handleModalClose}

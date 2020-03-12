@@ -1,41 +1,88 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import axios from "axios";
-class UserList extends Component {
-  constructor(props) {
-    super(props);
-    this.getData = this.getData.bind(this);
+
+export default class UserList extends Component {
+  constructor() {
+    super();
+    this.handleData = this.handleData.bind(this);
     this.state = {
-      user: []
+      users: []
     };
   }
-  getData() {
+
+  componentDidMount() {
+    this.handleData();
+  }
+
+  handleData() {
     axios
       .get("http://localhost:2020/user")
-      .then(response => {
-        this.setState({ user: response.data });
+      .then(res => {
+        this.setState(() => ({ users: res.data }));
       })
-      .catch(function(error) {
-        console.log(error);
-      })
-      .then(function() {
-        // always executed
-      });
+      .catch(err => console.log(err));
   }
+
   render() {
     return (
-      <div>
-        {this.state.user.map(res => {
-          return (
-            <div>
-              <p key={res._id}>{res._id}</p>
-              <p>{res.username}</p>
-              <p>{res.password}</p>
-            </div>
-          );
-        })}
-        <p>{this.getData()}</p>
-      </div>
+      <Fragment>
+        <div className="col-col-md-12">
+          <table style={{ marginTop: "100px" }} className="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Age</th>
+                <th>Address</th>
+                <th>Description</th>
+                <th>Image</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.users.map(data => {
+                return (
+                  <tr key={data._id}>
+                    <th scope="row">{data._id}</th>
+                    <th>{data.username}</th>
+                    <th>
+                      {data.age ? (
+                        <span>{data.age}</span>
+                      ) : (
+                        <span>No data</span>
+                      )}
+                    </th>
+                    <th>
+                      {data.address ? (
+                        <span>{data.address}</span>
+                      ) : (
+                        <span>No data</span>
+                      )}
+                    </th>
+                    <th>
+                      {data.description ? (
+                        <span>{data.description}</span>
+                      ) : (
+                        <span>No data</span>
+                      )}
+                    </th>
+                    <th>
+                      {data.image ? (
+                        <img
+                          style={{ width: "100px", height: "100px" }}
+                          alt={data.username}
+                          src={`${process.env.PUBLIC_URL}/uploads/users/${data.image}`}
+                        />
+                      ) : (
+                        <span>No Image</span>
+                      )}
+                    </th>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </Fragment>
     );
   }
 }
-export default UserList;

@@ -38,7 +38,7 @@ class AddProduct extends Component {
       .post("http://localhost:2020/product", formData, config)
       .then(res => {
         console.log(res)
-        // window.location.assign("/");
+        window.location.assign("/");
       })
       .catch(err => {
         console.log(err);

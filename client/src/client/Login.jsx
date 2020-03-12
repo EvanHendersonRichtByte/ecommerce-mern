@@ -102,12 +102,12 @@ class Login extends Component {
               Sign in
             </button>
             {/* Register */}
-            <p>
+            <p className="kryptonite-text">
               Not a member?
-              <Link to="/register">Register</Link>
+              <Link to="/register"> Register</Link>
             </p>
             {/* Social login */}
-            <p>or sign in with:</p>
+            <p className="kryptonite-text">or sign in with:</p>
             <a href="/" className="mx-2" role="button">
               <i className="fab fa-facebook-f light-blue-text" />
             </a>
@@ -121,7 +121,6 @@ class Login extends Component {
               <i className="fab fa-github light-blue-text" />
             </a>
           </form>
-          ;{/* Default form login */}
         </div>
       </Fragment>
     );
