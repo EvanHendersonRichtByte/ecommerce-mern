@@ -4,6 +4,10 @@ Ecommerce-MERN is a ecommerce site,online shop site,etc. We provide easy site na
 
 This project is currently maintained.
 
+## Preview
+![a](https://user-images.githubusercontent.com/58504115/76494957-7cb78600-6468-11ea-9bc4-1e6adb43fbdc.PNG)
+![b](https://user-images.githubusercontent.com/58504115/76494965-82ad6700-6468-11ea-8224-8ea4f32d78df.PNG)
+
 ## Installation
 
 Make sure you already installed latest version of node and mongodb server on your machine then extract this project on your machine
