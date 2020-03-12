@@ -6,7 +6,7 @@ This project is currently maintained.
 
 ## Preview
 ![a](https://user-images.githubusercontent.com/58504115/76494957-7cb78600-6468-11ea-9bc4-1e6adb43fbdc.PNG)
-![b](https://user-images.githubusercontent.com/58504115/76494965-82ad6700-6468-11ea-8224-8ea4f32d78df.PNG)
+![c](https://user-images.githubusercontent.com/58504115/76495091-c2744e80-6468-11ea-9029-28d583cc4170.PNG)
 
 ## Installation
 
