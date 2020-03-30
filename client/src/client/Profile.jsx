@@ -133,15 +133,6 @@ export default class Profile extends Component {
                     Profile
                   </span>
                 </li>
-                {/* <li className="nav-item">
-                  <span
-                    data-target="#messages"
-                    data-toggle="tab"
-                    className="kryptonite-text nav-link"
-                  >
-                    Messages
-                  </span>
-                </li> */}
                 <li className="nav-item">
                   <span
                     data-target="#edit"
