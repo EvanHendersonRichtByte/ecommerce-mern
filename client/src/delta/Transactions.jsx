@@ -52,7 +52,7 @@ export default class Transaction extends Component {
 					{/* Main jumbotron for a primary marketing message or call to action */}
 					<div className='jumbotron'>
 						<div className=' kryptonite-text container'>
-							<h1 className=' kryptonite-text display-3'>Transaction Data</h1>
+							<h1 className=' kryptonite-text display-3'>User Transactions</h1>
 							<p className='kryptonite-text'>Please confirm or decline user's transaction below!</p>
 						</div>
 					</div>
