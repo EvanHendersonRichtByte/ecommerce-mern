@@ -2,7 +2,7 @@
 
 Ecommerce-MERN is a ecommerce site,online shop site,etc. We provide easy site navigation,structure,and more. This Ecommerce is using MERN Stack which stands for MongoDB,Express,React,and Node.You can either pull this project and customize it with your own front-end.
 
-This project is currently maintained.
+This project is no longer maintained.
 
 ## Preview
 ![a](https://user-images.githubusercontent.com/58504115/76494957-7cb78600-6468-11ea-9bc4-1e6adb43fbdc.PNG)
